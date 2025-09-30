@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Electricity per Capita by State — Australia</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+  <style>body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}#vis{max-width:980px;margin:24px auto;padding:0 16px}</style>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    const spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": 800, "height": 600,
+      "projection": { "type": "conicEqualArea", "parallels": [-18, -36], "center": [134, -25], "scale": 900 },
+      "layer": [{
+        "data": {
+          "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/STE_2021_AUST_GDA2020.json",
+          "format": { "type": "topojson", "feature": "STE_2021_AUST_GDA2020" }
+        },
+        "transform": [
+          { "lookup": "properties.STE_NAME21",
+            "from": { "data": { "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/electricity_by_state.csv" },
+                      "key": "State",
+                      "fields": ["2023–24 PJ ", "2023–24 PJ"] } },
+          { "calculate": "isValid(datum['2023–24 PJ ']) ? datum['2023–24 PJ '] : datum['2023–24 PJ']", "as": "pj_raw" },
+          { "calculate": "toNumber(replace(replace(replace(replace(replace(datum.pj_raw, ',', ''), '\\u00A0', ''), '\\u202F', ''), ' ', ''), '\\t', '')) * 277.778", "as": "electricity_gwh" },
+
+          { "lookup": "properties.STE_NAME21",
+            "from": { "data": { "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/Annual%20population%20change%20at%2031%20March%202025.csv" },
+                      "key": "State",
+                      "fields": ["Population at 31 March 2025"] } },
+          { "calculate": "toNumber(replace(datum['Population at 31 March 2025'], ',', '')) * 1000", "as": "pop_2025" },
+
+          { "calculate": "(isValid(datum.electricity_gwh) && isValid(datum.pop_2025) && datum.pop_2025>0) ? datum.electricity_gwh / datum.pop_2025 : null",
+            "as": "gwh_per_capita" }
+        ],
+        "mark": { "type": "geoshape" },
+        "encoding": {
+          "color": { "field": "gwh_per_capita", "type": "quantitative", "title": "GWh per person" },
+          "tooltip": [
+            { "field": "properties.STE_NAME21", "title": "State" },
+            { "field": "electricity_gwh", "type": "quantitative", "title": "Electricity (GWh)", "format": ",.0f" },
+            { "field": "pop_2025", "type": "quantitative", "title": "Population", "format": ",.0f" },
+            { "field": "gwh_per_capita", "type": "quantitative", "title": "GWh per person", "format": ".6f" }
+          ]
+        }
+      }],
+      "title": "Electricity per Capita by State — Australia"
+    };
+    vegaEmbed('#vis', spec, { actions: false });
+  </script>
+</body>
+</html>
