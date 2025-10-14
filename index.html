@@ -1,72 +1,85 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Electricity per Capita by State — Australia</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
-  <style>body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}#vis{max-width:980px;margin:24px auto;padding:0 16px}</style>
+  <title>Average Sunlight hours in Australia</title>
+  <script src="https://cdn.jsdelivr.net/npm/vega@6.2.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@6.1.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@7.0.2"></script>
+  <style>
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; }
+  </style>
 </head>
 <body>
   <div id="vis"></div>
+
   <script>
     const spec = {
-  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
-  "width": 600,
-  "height": 500,
-  "layer": [
-    {
-      "data": {
-        "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/STE_2021_AUST_GDA2020.json",
-        "format": { "type": "topojson", "feature": "STE_2021_AUST_GDA2020" }
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "title": {
+        "text": "Average Sunlight hours in Australia",
+        "fontSize": 25,
+        "fontWeight": "bold",
+        "dy": 40
       },
-      "transform": [
+      "width": 600,
+      "height": 600,
+      "projection": {"type": "mercator", "center": [135, -26], "scale": 800},
+      "layer": [
         {
-          "lookup": "properties.STE_NAME21",
-          "from": {
-            "data": { "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/electricity_by_state.csv" },
-            "key": "State",
-            "fields": ["2023–24 PJ ", "2023–24 PJ"]
+          "data": {
+            "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/grid_cellsFINAL.json",
+            "format": {"type": "topojson", "feature": "grid_cellsFINAL"}
+          },
+          "transform": [
+            { "calculate": "toNumber(datum.id)", "as": "gid_num" },
+            {
+              "lookup": "gid_num",
+              "from": {
+                "data": {
+                  "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/sunann_gridvals.csv",
+                  "format": { "type": "csv", "parse": { "grid_id": "number", "value": "number" } }
+                },
+                "key": "grid_id",
+                "fields": ["value"]
+              }
+            },
+            { "calculate": "round(datum.value)", "as": "val_int" },
+            { "filter": "isValid(datum.val_int)" }
+          ],
+          "mark": {"type": "geoshape"},
+          "encoding": {
+            "color": {
+              "field": "val_int",
+              "type": "ordinal",
+              "title": "Sunshine (h)",
+              "scale": {"scheme": "inferno"}
+            },
+            "stroke": {"value": "#999"},
+            "strokeWidth": {"value": 0.00},
+            "tooltip": [
+              { "field": "gid_num", "title": "Grid ID" },
+              { "field": "val_int", "type": "ordinal", "title": "Sunshine (h)" }
+            ]
           }
         },
-        { "calculate": "isValid(datum['2023–24 PJ ']) ? datum['2023–24 PJ '] : datum['2023–24 PJ']", "as": "pj_raw" },
         {
-          "calculate": "toNumber(replace(replace(replace(replace(replace(datum.pj_raw, ',', ''), '\\u00A0', ''), '\\u202F', ''), ' ', ''), '\\t', '')) * 277.778",
-          "as": "electricity_gwh"
-        },
-        {
-          "lookup": "properties.STE_NAME21",
-          "from": {
-            "data": { "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/Annual%20population%20change%20at%2031%20March%202025.csv" },
-            "key": "State",
-            "fields": ["Population at 31 March 2025"]
+          "data": {
+            "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/Level2_Australia%20(1).json",
+            "format": {"type": "topojson", "feature": "Level2_Australia"}
+          },
+          "mark": {"type": "geoshape", "fill": null, "stroke": "#000000", "strokeWidth": 0.8},
+          "encoding": {
+            "tooltip": [{ "field": "properties.SA3_NAME21", "title": "SA3" }]
           }
-        },
-        { "calculate": "toNumber(replace(datum['Population at 31 March 2025'], ',', '')) * 1000", "as": "pop_2025" },
-        {
-          "calculate": "(isValid(datum.electricity_gwh) && isValid(datum.pop_2025) && datum.pop_2025>0) ? datum.electricity_gwh / datum.pop_2025 : null",
-          "as": "gwh_per_capita"
         }
       ],
-      "mark": { "type": "geoshape" },
-      "encoding": {
-        "color": { "field": "gwh_per_capita", "type": "quantitative", "title": "GWh per person"},
-        "stroke": {
-          "condition": { "test": "isValid(datum.gwh_per_capita)", "value": "#98a7b6" },
-          "value": "red",
-        },
-        "strokeWidth": {
-          "condition": { "test": "isValid(datum.gwh_per_capita)", "value": 0.9 },
-          "value": 2
-        }
-      }
-    }
-  ],
-  "title": "Electricity per Capita by State — Australia"
-};
-    vegaEmbed('#vis', spec, { actions: false });
+      "config": {}
+    };
+
+    vegaEmbed("#vis", spec, { mode: "vega-lite" })
+      .then(() => {})
+      .catch(console.warn);
   </script>
 </body>
 </html>
