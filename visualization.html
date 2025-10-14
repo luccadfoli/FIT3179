@@ -1,79 +1,85 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8" />
+  <title>Average Sunlight hours in Australia</title>
   <script src="https://cdn.jsdelivr.net/npm/vega@6.2.0"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@6.1.0"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@7.0.2"></script>
+  <style>
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; }
+  </style>
 </head>
 <body>
-  <div id="vis"/>
+  <div id="vis"></div>
+
   <script>
     const spec = {
-  {
-  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "width": 600,
-  "height": 600,
-  "projection": {"type": "mercator", "center": [135, -26], "scale": 800},
-  "layer": [
-    {
-      "data": {
-        "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/grid_cellsFINAL.json",
-        "format": {"type": "topojson", "feature": "grid_cellsFINAL"}
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "title": {
+        "text": "Average Sunlight hours in Australia",
+        "fontSize": 25,
+        "fontWeight": "bold",
+        "dy": 40
       },
-      "transform": [
-        { "calculate": "toNumber(datum.id)", "as": "gid_num" },
+      "width": 600,
+      "height": 600,
+      "projection": {"type": "mercator", "center": [135, -26], "scale": 800},
+      "layer": [
         {
-          "lookup": "gid_num",
-          "from": {
-            "data": {
-              "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/sunann_gridvals.csv",
-              "format": { "type": "csv", "parse": { "grid_id": "number", "value": "number" } }
+          "data": {
+            "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/grid_cellsFINAL.json",
+            "format": {"type": "topojson", "feature": "grid_cellsFINAL"}
+          },
+          "transform": [
+            { "calculate": "toNumber(datum.id)", "as": "gid_num" },
+            {
+              "lookup": "gid_num",
+              "from": {
+                "data": {
+                  "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/sunann_gridvals.csv",
+                  "format": { "type": "csv", "parse": { "grid_id": "number", "value": "number" } }
+                },
+                "key": "grid_id",
+                "fields": ["value"]
+              }
             },
-            "key": "grid_id",
-            "fields": ["value"]
+            { "calculate": "round(datum.value)", "as": "val_int" },
+            { "filter": "isValid(datum.val_int)" }
+          ],
+          "mark": {"type": "geoshape"},
+          "encoding": {
+            "color": {
+              "field": "val_int",
+              "type": "ordinal",
+              "title": "Sunshine (h)",
+              "scale": {"scheme": "inferno"}
+            },
+            "stroke": {"value": "#999"},
+            "strokeWidth": {"value": 0.00},
+            "tooltip": [
+              { "field": "gid_num", "title": "Grid ID" },
+              { "field": "val_int", "type": "ordinal", "title": "Sunshine (h)" }
+            ]
           }
         },
-        { "calculate": "round(datum.value)", "as": "val_int" },
-        { "filter": "isValid(datum.val_int)" }
+        {
+          "data": {
+            "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/Level2_Australia%20(1).json",
+            "format": {"type": "topojson", "feature": "Level2_Australia"}
+          },
+          "mark": {"type": "geoshape", "fill": null, "stroke": "#000000", "strokeWidth": 0.8},
+          "encoding": {
+            "tooltip": [{ "field": "properties.SA3_NAME21", "title": "SA3" }]
+          }
+        }
       ],
-      "mark": {"type": "geoshape"},
-      "encoding": {
-        "color": {
-          "field": "val_int",
-          "type": "ordinal",
-          "title": "Sunshine (h)",
-          "scale" :{"scheme": "inferno"}
-        },
-        "stroke": {"value": "#999"},
-        "strokeWidth": {"value": 0.00},
-        "tooltip": [
-          { "field": "gid_num", "title": "Grid ID" },
-          { "field": "val_int", "type": "ordinal", "title": "Sunshine (h)"}
-        ]
-      }
-    },
-    {
-      "data": {
-        "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/Level2_Australia%20(1).json",
-        "format": {"type": "topojson", "feature": "Level2_Australia"}
-      },
-      "mark": {"type": "geoshape", "fill": null, "stroke": "#000000", "strokeWidth": 0.8},
-      "encoding": {
-        "tooltip": [{ "field": "properties.SA3_NAME21", "title": "SA3" }]
-      }
-    }
-  ],
-"title": {
-    "text": "Average Sunlight hours in Australia",
-    "fontSize": 25,          /* bigger title */
-    "fontWeight": "bold",
-    "dy": 40,                /* push title downward */
+      "config": {}
+    };
 
-  },
-  "config": {}
-}
-
-    vegaEmbed("#vis", spec, {mode: "vega-lite"}).then(console.log).catch(console.warn);
+    vegaEmbed("#vis", spec, { mode: "vega-lite" })
+      .then(() => {})
+      .catch(console.warn);
   </script>
 </body>
 </html>
