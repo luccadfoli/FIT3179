@@ -1,9 +1,5 @@
 Citation
-Electricity_per_state: https://www.energy.gov.au/energy-data/australian-energy-statistics/states-and-territories
-Json: https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/digital-boundary-files
-  simplified with: https://mapshaper.org/
+
 Populatiopn: https://www.abs.gov.au/statistics/people/population/national-state-and-territory-population/latest-release#states-and-territories
-
-
 OCEANS:https://gist.github.com/jrrickard/8755532505a40f3b8317?short_path=999f34b#file-oceans-json 
 SUNLIGHT: https://www.bom.gov.au/climate/maps/averages/sunshine-hours/
