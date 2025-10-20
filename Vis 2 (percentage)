@@ -1,0 +1,32 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Homes with rooftop solar by state.",
+  "title":"Percentage of Homes with Solar Panels per state",
+  "width": {"step": 70},             // << increase horizontal size
+  "data": {
+    "values": [
+      {"State": "ACT", "Homes with Solar (%)": 33.21},
+      {"State": "NSW", "Homes with Solar (%)": 32.10},
+      {"State": "NT",  "Homes with Solar (%)": 25.31},
+      {"State": "QLD", "Homes with Solar (%)": 50.85},
+      {"State": "SA",  "Homes with Solar (%)": 53.29},
+      {"State": "TAS", "Homes with Solar (%)": 23.54},
+      {"State": "VIC", "Homes with Solar (%)": 29.19},
+      {"State": "WA",  "Homes with Solar (%)": 46.98}
+    ]
+  },
+  "mark": "bar",
+  "encoding": {
+    "x": {
+      "field": "State",
+      "type": "nominal",
+      "axis": {"labelAngle": 0, "labelPadding": 10},
+      "scale": {"paddingInner": 0.5, "paddingOuter": 0.25}
+    },
+    "y": {"field": "Homes with Solar (%)", "type": "quantitative"},
+    "tooltip": [
+      {"field": "State"},
+      {"field": "Homes with Solar (%)", "type": "quantitative", "format": ".2f", "title": "Homes with Solar (%)"}
+    ]
+  }
+}
