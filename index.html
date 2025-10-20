@@ -90,7 +90,7 @@
       "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
       "description": "Homes with rooftop solar by state.",
       "title": "Percentage of Homes with Solar Panels per state",
-      "width": {"step": 70}, // increase horizontal size
+      "width": {"step": 60}, // increase horizontal size
       "data": {
         "values": [
           {"State": "ACT", "Homes with Solar (%)": 33.21},
@@ -124,7 +124,7 @@
     var specVis3 = specVis1; // example: reuse bar chart in vis3 (or point to another file)
     var specVis4 = specVis2; // example: reuse line chart in vis4
 
-    vegaEmbed('#vis1', specVis1, { "actions": false });
+    
     vegaEmbed('#vis2', specVis2, { "actions": false }).catch(console.error);
     vegaEmbed('#vis3', specVis3, { "actions": false }).catch(console.error);
     vegaEmbed('#vis4', specVis4, { "actions": false }).catch(console.error);
