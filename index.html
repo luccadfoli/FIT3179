@@ -15,227 +15,334 @@
 
   <script>
     const spec = {
-      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-      "width": 800,
-      "height": 800,
-      "projection": { "type": "mercator", "center": [135, -26], "scale": 900 },
-    
-      "params": [
-        {
-          "name": "Show_Oceans",
-          "value": false,
-          "bind": { "input": "checkbox", "label": "Make oceans transparent" }
-        },
-        {
-          "name": "valFilter",
-          "value": "All",
-          "bind": {
-            "input": "select",
-            "name": "Show value: ",
-            "options": ["All","0","1","2","3","4","5","6","7","8","9","10"],
-            "labels":  ["All","0","1","2","3","4","5","6","7","8","9","10"]
-          }
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "width": 800,
+    "height": 800,
+  
+    "params": [
+      {
+        "name": "Melbourne",
+        "value": false,
+        "bind": {"input": "checkbox", "label": "Zoom in"}
+      },
+      {
+        "name": "Ocean",
+        "value": false,
+        "bind": {"input": "checkbox", "label": "Make oceans transparent"}
+      },
+      {
+        "name": "valFilter",
+        "value": "All",
+        "bind": {
+          "input": "select",
+          "name": "Show value: ",
+          "options": ["All","0","1","2","3","4","5","6","7","8","9","10"],
+          "labels":  ["All","0","1","2","3","4","5","6","7","8","9","10"]
         }
-      ],
-    
-      "layer": [
-        /* --- GRID (colored by value) --- */
-        {
-          "data": {
-            "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/grid_cellsFINAL.json",
-            "format": { "type": "topojson", "feature": "grid_cellsFINAL" }
+      }
+    ],
+  
+    "layer": [
+      /* ================== BASE VIEW (Melbourne == false) ================== */
+      {
+        "projection": { "type": "mercator", "center": [135, -26], "scale": 900 },
+        "layer": [
+          {
+            "data": {
+              "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/grid_cellsFINAL.json",
+              "format": {"type": "topojson", "feature": "grid_cellsFINAL"}
+            },
+            "transform": [
+              { "filter": "Melbourne == false" },
+              { "calculate": "toNumber(datum.id)", "as": "gid_num" },
+              {
+                "lookup": "gid_num",
+                "from": {
+                  "data": {
+                    "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/sunann_gridvals.csv",
+                    "format": {"type": "csv", "parse": {"grid_id":"number", "value":"number"}}
+                  },
+                  "key": "grid_id",
+                  "fields": ["value"]
+                }
+              },
+              { "calculate": "round(datum.value)", "as": "val_int" },
+              { "filter": "valFilter == 'All' || datum.val_int == toNumber(valFilter)" }
+            ],
+            "mark": {"type": "geoshape", "clip": true},
+            "encoding": {
+              "color": {"field": "val_int", "type": "ordinal", "title": "Sunshine (h)", "scale": {"scheme": "inferno"}},
+              "stroke": {"value": "#999"}, "strokeWidth": {"value": 0},
+              "tooltip": [
+        
+                {"field": "val_int", "type": "ordinal", "title": "Sunshine (h)"}
+              ]
+            }
           },
-          "transform": [
-            { "calculate": "toNumber(datum.id)", "as": "gid_num" },
-            {
-              "lookup": "gid_num",
-              "from": {
-                "data": {
-                  "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/sunann_gridvals.csv",
-                  "format": { "type": "csv", "parse": { "grid_id": "number", "value": "number" } }
-                },
-                "key": "grid_id",
-                "fields": ["value"]
+          {
+            "data": {
+              "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/refs/heads/main/oceans%20(1).json",
+              "format": {"type": "topojson", "feature": "oceans"}
+            },
+            "transform": [{ "filter": "Melbourne == false" }],
+            "mark": {"type": "geoshape", "fill": "#ffffff", "clip": true},
+            "encoding": {
+              "opacity": {
+                "condition": {"param": "Ocean", "value": 0},
+                "value": 1
               }
-            },
-            { "calculate": "round(datum.value)", "as": "val_int" },
-            /* filter by dropdown: keep all when 'All' is selected, else match the chosen integer */
-            { "filter": "valFilter == 'All' || datum.val_int == toNumber(valFilter)" }
-          ],
-          "mark": { "type": "geoshape" },
-          "encoding": {
-            "color": {
-              "field": "val_int",
-              "type": "ordinal",
-              "title": "Sunshine (h)",
-              "scale": { "scheme": "inferno" }
-            },
-            "stroke": { "value": "#999" },
-            "strokeWidth": { "value": 0.00 },
-            "tooltip": [
-              { "field": "gid_num", "title": "Grid ID" },
-              { "field": "val_int", "type": "ordinal", "title": "Sunshine (h)" }
-            ]
-          }
-        },
-    
-        /* --- OCEANS layer (white fill, toggle to transparent) --- */
-        {
-          "data": {
-            "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/refs/heads/main/oceans%20(1).json",
-            "format": { "type": "topojson", "feature": "oceans" }
+            }
           },
-          "mark": { "type": "geoshape", "fill": "#ffffff", "stroke": null },
-          "encoding": {
-            "opacity": {
-              "condition": { "param": "Show_Oceans", "value": 0 },
-              "value": 1
+          {
+            "data": {
+              "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/Level2_Australia%20(1).json",
+              "format": {"type": "topojson", "feature": "Level2_Australia"}
+            },
+            "transform": [{ "filter": "Melbourne == false" }],
+            "mark": {"type": "geoshape", "fill": null, "stroke": "#000000", "strokeWidth": 0.8, "clip": true},
+            "encoding": {"tooltip": [{"field": "properties.SA3_NAME21", "title": "SA3"}]}
+          },
+  
+          /* ---- Annotations (BASE; Melbourne == false) ---- */
+          {
+            "transform": [{ "filter": "Melbourne == false" }],
+            "data": { "values": [ { "name": "West Pilbara (10 hours)", "lon": 117.2, "lat": -21.9 } ] },
+            "mark": { "type": "point", "filled": true, "size": 120, "color": "#1569a5", "clip": true },
+            "encoding": {
+              "longitude": { "field": "lon", "type": "quantitative" },
+              "latitude": { "field": "lat", "type": "quantitative" },
+              "tooltip": [{ "field": "name", "title": "Location"}]
+            }
+          },
+          {
+            "transform": [{ "filter": "Melbourne == false" }],
+            "data": { "values": [ { "label": "West Pilbara, WA (10)", "lon": 115, "lat": -10.7 } ] },
+            "mark": { "type": "text", "dx": 8, "dy": -8, "fontSize": 13,
+                      "fill": "#1569a5", "stroke": "#1569a5", "strokeWidth": 1, "clip": true },
+            "encoding": {
+              "longitude": { "field": "lon", "type": "quantitative" },
+              "latitude": { "field": "lat", "type": "quantitative" },
+              "text": { "field": "label" }
+            }
+          },
+          {
+            "transform": [{ "filter": "Melbourne == false" }],
+            "data": { "values": [ { "name": "WA and NT (9 hours)", "lon": 129, "lat": -22 } ] },
+            "mark": { "type": "point", "filled": true, "size": 120, "color": "#068f2f", "clip": true },
+            "encoding": {
+              "longitude": { "field": "lon", "type": "quantitative" },
+              "latitude": { "field": "lat", "type": "quantitative" },
+              "tooltip": [{ "field": "name", "title": "Location"}]
+            }
+          },
+          {
+            "transform": [{ "filter": "Melbourne == false" }],
+            "data": { "values": [ { "label": "WA and NT (9)", "lon": 113.7, "lat": -11.7 } ] },
+            "mark": { "type": "text", "dx": 8, "dy": -8, "fontSize": 13,
+                      "fill": "#068f2f", "stroke": "#068f2f", "strokeWidth": 1, "clip": true },
+            "encoding": {
+              "longitude": { "field": "lon", "type": "quantitative" },
+              "latitude": { "field": "lat", "type": "quantitative" },
+              "text": { "field": "label" }
+            }
+          },
+          {
+            "transform": [{ "filter": "Melbourne == false" }],
+            "data": { "values": [ { "name": "Cobar/Bourke, NSW (9 hours)", "lon": 145.4, "lat": -30.8 } ] },
+            "mark": { "type": "point", "filled": true, "size": 120, "color": "#5f01b8", "clip": true },
+            "encoding": {
+              "longitude": { "field": "lon", "type": "quantitative" },
+              "latitude": { "field": "lat", "type": "quantitative" },
+              "tooltip": [{ "field": "name", "title": "Location"}]
+            }
+          },
+          {
+            "transform": [{ "filter": "Melbourne == false" }],
+            "data": { "values": [ { "label": "Cobar/Bourke, NSW (9)", "lon": 115.3, "lat": -12.7 } ] },
+            "mark": { "type": "text", "dx": 8, "dy": -8, "fontSize": 13,
+                      "fill": "#5f01b8", "stroke": "#5f01b8", "strokeWidth": 1, "clip": true },
+            "encoding": {
+              "longitude": { "field": "lon", "type": "quantitative" },
+              "latitude": { "field": "lat", "type": "quantitative" },
+              "text": { "field": "label" }
+            }
+          },
+          {
+            "transform": [{ "filter": "Melbourne == false" }],
+            "data": { "values": [ { "name": "Weemelah, NSW (9 hours)", "lon": 149, "lat": -29.2 } ] },
+            "mark": { "type": "point", "filled": true, "size": 120, "color": "#ee007b", "clip": true },
+            "encoding": {
+              "longitude": { "field": "lon", "type": "quantitative" },
+              "latitude": { "field": "lat", "type": "quantitative" },
+              "tooltip": [{ "field": "name", "title": "Location"}]
+            }
+          },
+          {
+            "transform": [{ "filter": "Melbourne == false" }],
+            "data": { "values": [ { "label": "Weemelah, NSW (9)", "lon": 114.8, "lat": -13.7 } ] },
+            "mark": { "type": "text", "dx": 8, "dy": -8, "fontSize": 13,
+                      "fill": "#ee007b", "stroke": "#ee007b", "strokeWidth": 1, "clip": true },
+            "encoding": {
+              "longitude": { "field": "lon", "type": "quantitative" },
+              "latitude": { "field": "lat", "type": "quantitative" },
+              "text": { "field": "label" }
             }
           }
-        },
-    
-        /* --- AUSTRALIA outline on top --- */
-        {
-          "data": {
-            "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/Level2_Australia%20(1).json",
-            "format": { "type": "topojson", "feature": "Level2_Australia" }
-          },
-          "mark": { "type": "geoshape", "fill": null, "stroke": "#000000", "strokeWidth": 0.8 },
-          "encoding": {
-            "tooltip": [{ "field": "properties.SA3_NAME21", "title": "SA3" }]
-          }
-        },
-    
-        /* ---- West Pilbara annotation: point ---- */
-        {
-          "data": { "values": [ { "name": "West Pilbara", "lon": 117.2, "lat": -21.9 } ] },
-          "mark": { "type": "point", "filled": true, "size": 120, "color": "#1569a5" },
-          "encoding": {
-            "longitude": { "field": "lon", "type": "quantitative" },
-            "latitude": { "field": "lat", "type": "quantitative" }
-          }
-        },
-    
-        /* ---- West Pilbara annotation: label ---- */
-        {
-          "data": { "values": [ { "label": "West Pilbara, WA (10)", "lon": 115, "lat": -10.7 } ] },
-          "mark": {
-            "type": "text",
-            "dx": 8,
-            "dy": -8,
-            "fontSize": 13.5,
-            "fontWeight": "bold",
-            "color": "#1569a5",
-            "background": "rgba(255,255,255,0.85)"
-          },
-          "encoding": {
-            "longitude": { "field": "lon", "type": "quantitative" },
-            "latitude": { "field": "lat", "type": "quantitative" },
-            "text": { "field": "label" }
-          }
-        },
-    
-    
-        /* ---- WA and NT point ---- */
-        {
-          "data": { "values": [ { "name": "WA and NT", "lon": 129, "lat": -22 } ] },
-          "mark": { "type": "point", "filled": true, "size": 120, "color": "#068f2f" },
-          "encoding": {
-            "longitude": { "field": "lon", "type": "quantitative" },
-            "latitude": { "field": "lat", "type": "quantitative" }
-          }
-        },
-    
-        /* ---- West Pilbara annotation: label ---- */
-        {
-          "data": { "values": [ { "label": "WA and NT (9)", "lon": 113.5, "lat": -11.7 } ] },
-          "mark": {
-            "type": "text",
-            "dx": 8,
-            "dy": -8,
-            "fontSize": 13.5,
-            "fontWeight": "bold",
-            "color": "#068f2f",
-            "background": "rgba(255,255,255,0.85)"
-          },
-          "encoding": {
-            "longitude": { "field": "lon", "type": "quantitative" },
-            "latitude": { "field": "lat", "type": "quantitative" },
-            "text": { "field": "label" }
-          }
-        },
-    
-        /* ---- Cobar/Bourke, NSW point ---- */
-        {
-          "data": { "values": [ { "name": "Cobar/Bourke, NSW (9)", "lon": 145.4, "lat": -30.8 } ] },
-          "mark": { "type": "point", "filled": true, "size": 120, "color": "#5f01b8" },
-          "encoding": {
-            "longitude": { "field": "lon", "type": "quantitative" },
-            "latitude": { "field": "lat", "type": "quantitative" }
-          }
-        },
-    
-        /* ---- West Pilbara annotation: label ---- */
-        {
-          "data": { "values": [ { "label": "Cobar/Bourke, NSW (9)", "lon": 115.4, "lat": -12.7 } ] },
-          "mark": {
-            "type": "text",
-            "dx": 8,
-            "dy": -8,
-            "fontSize": 13.5,
-            "fontWeight": "bold",
-            "color": "#5f01b8",
-            "background": "rgba(255,255,255,0.85)"
-          },
-          "encoding": {
-            "longitude": { "field": "lon", "type": "quantitative" },
-            "latitude": { "field": "lat", "type": "quantitative" },
-            "text": { "field": "label" }
-          }
-        },
-    
-            /* ---- Weemelah point ---- */
-        {
-          "data": { "values": [ { "name": "Weemelah, NSW (9)", "lon": 149, "lat": -29.2 } ] },
-          "mark": { "type": "point", "filled": true, "size": 120, "color": "#ee007b" },
-          "encoding": {
-            "longitude": { "field": "lon", "type": "quantitative" },
-            "latitude": { "field": "lat", "type": "quantitative" }
-          }
-        },
-    
-        /* ---- Weemelah ---- */
-        {
-          "data": { "values": [ { "label": "Weemelah, NSW (9)", "lon": 114.7, "lat": -13.7 } ] },
-          "mark": {
-            "type": "text",
-            "dx": 8,
-            "dy": -8,
-            "fontSize": 13.5,
-            "fontWeight": "bold",
-            "color": "#ee007b",
-            "background": "rgba(255,255,255,0.85)"
-          },
-          "encoding": {
-            "longitude": { "field": "lon", "type": "quantitative" },
-            "latitude": { "field": "lat", "type": "quantitative" },
-            "text": { "field": "label" }
-          }
-        }
-    
-    
-    
-      ],
-    
-      "title": {
-        "text": "Average Sunlight hours in Australia",
-        "fontSize": 25,
-        "fontWeight": "bold",
-        "dy": 40
+        ]
       },
-    
-      "config": {}
-    };
+  
+      /* ================== ZOOMED VIEW (Melbourne == true) ================== */
+      {
+        "projection": { "type": "mercator", "center": [145, -37.8], "scale": 8000 },
+        "layer": [
+          {
+            "data": {
+              "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/grid_cellsFINAL.json",
+              "format": {"type": "topojson", "feature": "grid_cellsFINAL"}
+            },
+            "transform": [
+              { "filter": "Melbourne == true" },
+              { "calculate": "toNumber(datum.id)", "as": "gid_num" },
+              {
+                "lookup": "gid_num",
+                "from": {
+                  "data": {
+                    "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/sunann_gridvals.csv",
+                    "format": {"type": "csv", "parse": {"grid_id":"number", "value":"number"}}
+                  },
+                  "key": "grid_id",
+                  "fields": ["value"]
+                }
+              },
+              { "calculate": "round(datum.value)", "as": "val_int" },
+              { "filter": "valFilter == 'All' || datum.val_int == toNumber(valFilter)" }
+            ],
+            "mark": {"type": "geoshape", "clip": true},
+            "encoding": {
+              "color": {"field": "val_int", "type": "ordinal", "title": "Sunshine (h)", "scale": {"scheme": "inferno"}},
+              "stroke": {"value": "#999"}, "strokeWidth": {"value": 0},
+              "tooltip": [
+                {"field": "gid_num", "title": "Grid ID"},
+                {"field": "val_int", "type": "ordinal", "title": "Sunshine (h)"}
+              ]
+            }
+          },
+          {
+            "data": {
+              "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/refs/heads/main/oceans%20(1).json",
+              "format": {"type": "topojson", "feature": "oceans"}
+            },
+            "transform": [{ "filter": "Melbourne == true" }],
+            "mark": {"type": "geoshape", "fill": "#ffffff", "clip": true},
+            "encoding": {
+              "opacity": {
+                "condition": {"param": "Ocean", "value": 0},
+                "value": 1
+              }
+            }
+          },
+          {
+            "data": {
+              "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/Level2_Australia%20(1).json",
+              "format": {"type": "topojson", "feature": "Level2_Australia"}
+            },
+            "transform": [{ "filter": "Melbourne == true" }],
+            "mark": {"type": "geoshape", "fill": null, "stroke": "#000000", "strokeWidth": 0.8, "clip": true},
+            "encoding": {"tooltip": [{"field": "properties.SA3_NAME21", "title": "SA3"}]}
+          },
+  
+          /* ---- Annotations (ZOOMED; Melbourne == true) ---- */
+          {
+            "transform": [{ "filter": "Melbourne == true" }],
+            "data": { "values": [ { "name": "West Pilbara", "lon": 117.2, "lat": -21.9 } ] },
+            "mark": { "type": "point", "filled": true, "size": 120, "color": "#1569a5", "clip": true },
+            "encoding": {
+              "longitude": { "field": "lon", "type": "quantitative" },
+              "latitude": { "field": "lat", "type": "quantitative" },
+              "tooltip": [{ "field": "name", "title": "Location"}]
+            }
+          },
+          {
+            "transform": [{ "filter": "Melbourne == true" }],
+            "data": { "values": [ { "label": "West Pilbara, WA (10)", "lon": 115, "lat": -10.7 } ] },
+            "mark": { "type": "text", "dx": 8, "dy": -8, "fontSize": 13.5, "fontWeight": "bold",
+                      "fill": "#1569a5", "stroke": "white", "strokeWidth": 3, "clip": true },
+            "encoding": {
+              "longitude": { "field": "lon", "type": "quantitative" },
+              "latitude": { "field": "lat", "type": "quantitative" },
+              "text": { "field": "label" }
+            }
+          },
+          {
+            "transform": [{ "filter": "Melbourne == true" }],
+            "data": { "values": [ { "name": "WA and NT", "lon": 129, "lat": -22 } ] },
+            "mark": { "type": "point", "filled": true, "size": 120, "color": "#068f2f", "clip": true },
+            "encoding": {
+              "longitude": { "field": "lon", "type": "quantitative" },
+              "latitude": { "field": "lat", "type": "quantitative" },
+              "tooltip": [{ "field": "name", "title": "Location"}]
+            }
+          },
+          {
+            "transform": [{ "filter": "Melbourne == true" }],
+            "data": { "values": [ { "label": "WA and NT (9 hours)", "lon": 113.5, "lat": -11.7 } ] },
+            "mark": { "type": "text", "dx": 8, "dy": -8, "fontSize": 13.5, "fontWeight": "bold",
+                      "fill": "#068f2f", "stroke": "white", "strokeWidth": 3, "clip": true },
+            "encoding": {
+              "longitude": { "field": "lon", "type": "quantitative" },
+              "latitude": { "field": "lat", "type": "quantitative" },
+              "text": { "field": "label" }
+            }
+          },
+          {
+            "transform": [{ "filter": "Melbourne == true" }],
+            "data": { "values": [ { "name": "Cobar/Bourke, NSW (9 hours)", "lon": 145.4, "lat": -30.8 } ] },
+            "mark": { "type": "point", "filled": true, "size": 120, "color": "#5f01b8", "clip": true },
+            "encoding": {
+              "longitude": { "field": "lon", "type": "quantitative" },
+              "latitude": { "field": "lat", "type": "quantitative" },
+              "tooltip": [{ "field": "name", "title": "Location"}]
+            }
+          },
+          {
+            "transform": [{ "filter": "Melbourne == true" }],
+            "data": { "values": [ { "label": "Cobar/Bourke, NSW (9 hours)", "lon": 115.4, "lat": -12.7 } ] },
+            "mark": { "type": "text", "dx": 8, "dy": -8, "fontSize": 13.5, "fontWeight": "bold",
+                      "fill": "#5f01b8", "stroke": "white", "strokeWidth": 3, "clip": true },
+            "encoding": {
+              "longitude": { "field": "lon", "type": "quantitative" },
+              "latitude": { "field": "lat", "type": "quantitative" },
+              "text": { "field": "label" }
+            }
+          },
+          {
+            "transform": [{ "filter": "Melbourne == true" }],
+            "data": { "values": [ { "name": "Weemelah, NSW (9)", "lon": 149, "lat": -29.2 } ] },
+            "mark": { "type": "point", "filled": true, "size": 120, "color": "#ee007b", "clip": true },
+            "encoding": {
+              "longitude": { "field": "lon", "type": "quantitative" },
+              "latitude": { "field": "lat", "type": "quantitative" },
+              "tooltip": [{ "field": "name", "title": "Location"}]
+            }
+          },
+          {
+            "transform": [{ "filter": "Melbourne == true" }],
+            "data": { "values": [ { "label": "Weemelah, NSW (9)", "lon": 114.7, "lat": -13.7 } ] },
+            "mark": { "type": "text", "dx": 8, "dy": -8, "fontSize": 13.5, "fontWeight": "bold",
+                      "fill": "#ee007b", "stroke": "white", "strokeWidth": 3, "clip": true },
+            "encoding": {
+              "longitude": { "field": "lon", "type": "quantitative" },
+              "latitude": { "field": "lat", "type": "quantitative" },
+              "text": { "field": "label" }
+            }
+          }
+        ]
+      }
+    ],
+  
+    "title": { "text": "Average Sunlight hours in Australia", "fontSize": 25, "fontWeight": "bold", "dy": 40 },
+    "config": {}
+  };
 
     vegaEmbed("#vis", spec, { mode: "vega-lite" })
       .then(() => {})
