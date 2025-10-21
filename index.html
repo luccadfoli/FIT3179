@@ -27,10 +27,43 @@
       max-width: 1300px;
       margin: 0 auto;
       padding: 0 12px;
-      border-left: 1px solid #ebc81a;
-      border-right: 1px solid #ebc81a;
       box-sizing: border-box;
+      position: relative; 
+      z-index: 1;
     }
+
+    .page::before,
+  .page::after {
+    content: "";
+    position: fixed;               
+    top: 0;
+    bottom: 0;
+    width: clamp(60px, 8vw, 140px);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 0;                    /* behind the page content */
+    pointer-events: none;          
+  }
+
+    .page::before {
+    left: 0;
+    background-image: url("https://github.com/luccadfoli/FIT3179/blob/main/0df25ae2-a3ad-4b01-9c6e-f99abb2ccce3.png?raw=true"); /* <- your image */
+  }
+  
+  /* Right rail */
+  .page::after {
+    right: 0;
+    background-image: url("https://github.com/luccadfoli/FIT3179/blob/main/0df25ae2-a3ad-4b01-9c6e-f99abb2ccce3.png?raw=true"); /* <- your image */
+  }
+
+    html, body {   /* no horizontal scroll */
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    font-family: 'Open Sans', system-ui, -apple-system, sans-serif;
+  }
+
     .pure-g > [class*="pure-u"] { padding: 6px; box-sizing: border-box; }
 
     .vis-container { width: 100%; min-height: 260px; }
