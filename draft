@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Solar Panels in Australia</title>
+
+  <!-- Vega stack -->
+  <script src="https://cdn.jsdelivr.net/npm/vega@5.20.2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.1.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.17.0"></script>
+
+  <!-- pure.css -->
+  <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
+        integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+
+  <!-- Google font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+
+  <!-- Your CSS -->
+  <link rel="stylesheet" type="text/css" href="css/styles.css" media="all">
+
+  <style>
+    html, body { margin: 0; padding: 0; overflow-x: hidden; font-family: 'Open Sans', system-ui, -apple-system, sans-serif; }
+    .page {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 12px;
+      border-left: 1px solid #ebc81a;
+      border-right: 1px solid #ebc81a;
+      box-sizing: border-box;
+    }
+    .pure-g > [class*="pure-u"] { padding: 6px; box-sizing: border-box; }
+
+    .vis-container { width: 100%; min-height: 260px; }
+    .vega-embed, .vega-embed > * { width: 100% !important; max-width: 100% !important; }
+    .vega-embed svg, .vega-embed canvas { width: 100% !important; height: auto; }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <!-- Header -->
+    <div class="pure-g">
+      <div class="pure-u-1-1">
+        <h1>Solar Panels in Australia</h1>
+        <p>The best places to set up photovoltaic solar panels in Australia.</p>
+      </div>
+    </div>
+
+    <!-- Row 1 -->
+    <div class="pure-g">
+      <div class="pure-u-1-2">
+        <div class="description description-left">
+          <h2>Residential Usage of Solar Panels</h2>
+          <p>
+            Over the years, the use of solar panels (photovoltaic cells) on the top of roofs in residential areas has
+            been steadily rising. Today, roughly 38% of homes nationwide generate their own solar power. South Australia
+            and Queensland lead the transition with more than half of households equipped with rooftop systems, while
+            Western Australia follows closely at 46.98%. In contrast, more densely populated states such as New South
+            Wales (32.10%) and Victoria (29.19%) show lower adoption rates, likely due to a higher amount people in 
+            apartment housing.
+          </p>
+        </div>
+      </div>
+      <div class="pure-u-1-2">
+        <div id="vis1" class="vis-container"></div>
+      </div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="pure-g">
+      <div class="pure-u-1-2">
+        <div class="description description-left">
+          <h2>Growth of Adoption</h2>
+          <p>
+            Annual rooftop solar installations surged from 2016 and peaked during 2020–2021, indicating the growth of adoption. Later years show a decline, however,
+            this is expected as the more and more homes have solar panels, the less emply roofs there are to install more. If addoption continues, this rate is likely 
+            to decrease, and stay at a level at the rate old solar panels are replaced by new ones. (note): The 2025 number is 
+            likely not as accurate as the other's as the figure is not up to date and 2025 has not finished yet.
+          </p>
+        </div>
+      </div>
+      <div class="pure-u-1-2">
+        <div id="vis3" class="vis-container"></div>
+      </div>
+    </div>
+
+    <!-- Row 3 -->
+    <div class="pure-g">
+      <div class="pure-u-2-3">
+        <div id="vis2" class="vis-container"></div>
+      </div>
+      <div class="pure-u-1-3">
+        <div class="description description-right">
+          <h2>Sunlight Patterns</h2>
+          <p>
+            Average sunshine hours vary across Australia. Use the controls to filter values or zoom into Melbourne’s region.
+            Locations across WA and NT typically record higher sunshine hours, aligning with stronger solar potential.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="pure-g">
+      <div class="pure-u-1-1">
+        <p style="font-size:0.9rem;color:#555;">
+          This visualisation is created by the student. The datasource is a combination of public datasets (links in the repository).
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /* vis1: bar */
+    var specVis1 = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "title": "Percentage of Homes with Solar Panels per State",
+      "width": "container",
+      "height": 320,
+      "autosize": {"type": "fit", "contains": "padding"},
+      "data": { "values": [
+        {"State": "ACT", "Homes with Solar (%)": 33.21},
+        {"State": "NSW", "Homes with Solar (%)": 32.10},
+        {"State": "NT",  "Homes with Solar (%)": 25.31},
+        {"State": "QLD", "Homes with Solar (%)": 50.85},
+        {"State": "SA",  "Homes with Solar (%)": 53.29},
+        {"State": "TAS", "Homes with Solar (%)": 23.54},
+        {"State": "VIC", "Homes with Solar (%)": 29.19},
+        {"State": "WA",  "Homes with Solar (%)": 46.98}
+      ]},
+      "mark": "bar",
+      "encoding": {
+        "x": {"field": "State", "type": "nominal", "axis": {"labelAngle": 0}},
+        "y": {"field": "Homes with Solar (%)", "type": "quantitative"}
+      }
+    };
+
+    /* vis3: line */
+    var specVis3 = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "title":"Solar Systems Installed per Year",
+      "width": "container",
+      "height": 280,
+      "autosize": {"type": "fit", "contains": "padding"},
+      "data": { "values": [
+        {"Year": "2016", "Solar Systems Installed": 132697},
+        {"Year": "2017", "Solar Systems Installed": 174942},
+        {"Year": "2018", "Solar Systems Installed": 224852},
+        {"Year": "2019", "Solar Systems Installed": 284031},
+        {"Year": "2020", "Solar Systems Installed": 370320},
+        {"Year": "2021", "Solar Systems Installed": 377458},
+        {"Year": "2022", "Solar Systems Installed": 315717},
+        {"Year": "2023", "Solar Systems Installed": 333859},
+        {"Year": "2024", "Solar Systems Installed": 317348},
+        {"Year": "2025", "Solar Systems Installed": 95393}
+      ]},
+      "mark": {"type": "line", "point": true},
+      "encoding": {
+        "x": {"field": "Year", "type": "ordinal", "axis": {"labelAngle": 0}},
+        "y": {"field": "Solar Systems Installed", "type": "quantitative"}
+      }
+    };
+
+    /* vis2: map */
+    var specVis2 = {
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 800,
+  "height": 800,
+
+  "params": [
+    {
+      "name": "Melbourne",
+      "value": false,
+      "bind": {"input": "checkbox", "label": "Zoom in"}
+    },
+    {
+      "name": "Ocean",
+      "value": false,
+      "bind": {"input": "checkbox", "label": "Make oceans transparent"}
+    },
+    {
+      "name": "valFilter",
+      "value": "All",
+      "bind": {
+        "input": "select",
+        "name": "Show value: ",
+        "options": ["All","0","1","2","3","4","5","6","7","8","9","10"],
+        "labels":  ["All","0","1","2","3","4","5","6","7","8","9","10"]
+      }
+    }
+  ],
+
+  "layer": [
+    /* ================== BASE VIEW (Melbourne == false) ================== */
+    {
+      "projection": { "type": "mercator", "center": [135, -26], "scale": 900 },
+      "layer": [
+        {
+          "data": {
+            "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/grid_cellsFINAL.json",
+            "format": {"type": "topojson", "feature": "grid_cellsFINAL"}
+          },
+          "transform": [
+            { "filter": "Melbourne == false" },
+            { "calculate": "toNumber(datum.id)", "as": "gid_num" },
+            {
+              "lookup": "gid_num",
+              "from": {
+                "data": {
+                  "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/sunann_gridvals.csv",
+                  "format": {"type": "csv", "parse": {"grid_id":"number", "value":"number"}}
+                },
+                "key": "grid_id",
+                "fields": ["value"]
+              }
+            },
+            { "calculate": "round(datum.value)", "as": "val_int" },
+            { "filter": "valFilter == 'All' || datum.val_int == toNumber(valFilter)" }
+          ],
+          "mark": {"type": "geoshape", "clip": true},
+          "encoding": {
+            "color": {"field": "val_int", "type": "ordinal", "title": "Sunshine (h)", "scale": {"scheme": "inferno"}},
+            "stroke": {"value": "#999"}, "strokeWidth": {"value": 0},
+            "tooltip": [
+      
+              {"field": "val_int", "type": "ordinal", "title": "Sunshine (h)"}
+            ]
+          }
+        },
+        {
+          "data": {
+            "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/refs/heads/main/oceans%20(1).json",
+            "format": {"type": "topojson", "feature": "oceans"}
+          },
+          "transform": [{ "filter": "Melbourne == false" }],
+          "mark": {"type": "geoshape", "fill": "#ffffff", "clip": true},
+          "encoding": {
+            "opacity": {
+              "condition": {"param": "Ocean", "value": 0},
+              "value": 1
+            }
+          }
+        },
+        {
+          "data": {
+            "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/Level2_Australia%20(1).json",
+            "format": {"type": "topojson", "feature": "Level2_Australia"}
+          },
+          "transform": [{ "filter": "Melbourne == false" }],
+          "mark": {"type": "geoshape", "fill": null, "stroke": "#000000", "strokeWidth": 0.8, "clip": true},
+          "encoding": {"tooltip": [{"field": "properties.SA3_NAME21", "title": "SA3"}]}
+        },
+
+        /* ---- Annotations (BASE; Melbourne == false) ---- */
+        {
+          "transform": [{ "filter": "Melbourne == false" }],
+          "data": { "values": [ { "name": "West Pilbara (10 hours)", "lon": 117.2, "lat": -21.9 } ] },
+          "mark": { "type": "point", "filled": true, "size": 120, "color": "#1569a5", "clip": true },
+          "encoding": {
+            "longitude": { "field": "lon", "type": "quantitative" },
+            "latitude": { "field": "lat", "type": "quantitative" },
+            "tooltip": [{ "field": "name", "title": "Location"}]
+          }
+        },
+        {
+          "transform": [{ "filter": "Melbourne == false" }],
+          "data": { "values": [ { "label": "West Pilbara, WA (10)", "lon": 115, "lat": -10.7 } ] },
+          "mark": { "type": "text", "dx": 8, "dy": -8, "fontSize": 13,
+                    "fill": "#1569a5", "stroke": "#1569a5", "strokeWidth": 1, "clip": true },
+          "encoding": {
+            "longitude": { "field": "lon", "type": "quantitative" },
+            "latitude": { "field": "lat", "type": "quantitative" },
+            "text": { "field": "label" }
+          }
+        },
+        {
+          "transform": [{ "filter": "Melbourne == false" }],
+          "data": { "values": [ { "name": "WA and NT (9 hours)", "lon": 129, "lat": -22 } ] },
+          "mark": { "type": "point", "filled": true, "size": 120, "color": "#068f2f", "clip": true },
+          "encoding": {
+            "longitude": { "field": "lon", "type": "quantitative" },
+            "latitude": { "field": "lat", "type": "quantitative" },
+            "tooltip": [{ "field": "name", "title": "Location"}]
+          }
+        },
+        {
+          "transform": [{ "filter": "Melbourne == false" }],
+          "data": { "values": [ { "label": "WA and NT (9)", "lon": 113.7, "lat": -11.7 } ] },
+          "mark": { "type": "text", "dx": 8, "dy": -8, "fontSize": 13,
+                    "fill": "#068f2f", "stroke": "#068f2f", "strokeWidth": 1, "clip": true },
+          "encoding": {
+            "longitude": { "field": "lon", "type": "quantitative" },
+            "latitude": { "field": "lat", "type": "quantitative" },
+            "text": { "field": "label" }
+          }
+        },
+        {
+          "transform": [{ "filter": "Melbourne == false" }],
+          "data": { "values": [ { "name": "Cobar/Bourke, NSW (9 hours)", "lon": 145.4, "lat": -30.8 } ] },
+          "mark": { "type": "point", "filled": true, "size": 120, "color": "#5f01b8", "clip": true },
+          "encoding": {
+            "longitude": { "field": "lon", "type": "quantitative" },
+            "latitude": { "field": "lat", "type": "quantitative" },
+            "tooltip": [{ "field": "name", "title": "Location"}]
+          }
+        },
+        {
+          "transform": [{ "filter": "Melbourne == false" }],
+          "data": { "values": [ { "label": "Cobar/Bourke, NSW (9)", "lon": 115.3, "lat": -12.7 } ] },
+          "mark": { "type": "text", "dx": 8, "dy": -8, "fontSize": 13,
+                    "fill": "#5f01b8", "stroke": "#5f01b8", "strokeWidth": 1, "clip": true },
+          "encoding": {
+            "longitude": { "field": "lon", "type": "quantitative" },
+            "latitude": { "field": "lat", "type": "quantitative" },
+            "text": { "field": "label" }
+          }
+        },
+        {
+          "transform": [{ "filter": "Melbourne == false" }],
+          "data": { "values": [ { "name": "Weemelah, NSW (9 hours)", "lon": 149, "lat": -29.2 } ] },
+          "mark": { "type": "point", "filled": true, "size": 120, "color": "#ee007b", "clip": true },
+          "encoding": {
+            "longitude": { "field": "lon", "type": "quantitative" },
+            "latitude": { "field": "lat", "type": "quantitative" },
+            "tooltip": [{ "field": "name", "title": "Location"}]
+          }
+        },
+        {
+          "transform": [{ "filter": "Melbourne == false" }],
+          "data": { "values": [ { "label": "Weemelah, NSW (9)", "lon": 114.8, "lat": -13.7 } ] },
+          "mark": { "type": "text", "dx": 8, "dy": -8, "fontSize": 13,
+                    "fill": "#ee007b", "stroke": "#ee007b", "strokeWidth": 1, "clip": true },
+          "encoding": {
+            "longitude": { "field": "lon", "type": "quantitative" },
+            "latitude": { "field": "lat", "type": "quantitative" },
+            "text": { "field": "label" }
+          }
+        }
+      ]
+    },
+
+    /* ================== ZOOMED VIEW (Melbourne == true) ================== */
+    {
+      "projection": { "type": "mercator", "center": [145, -37.8], "scale": 8000 },
+      "layer": [
+        {
+          "data": {
+            "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/grid_cellsFINAL.json",
+            "format": {"type": "topojson", "feature": "grid_cellsFINAL"}
+          },
+          "transform": [
+            { "filter": "Melbourne == true" },
+            { "calculate": "toNumber(datum.id)", "as": "gid_num" },
+            {
+              "lookup": "gid_num",
+              "from": {
+                "data": {
+                  "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/sunann_gridvals.csv",
+                  "format": {"type": "csv", "parse": {"grid_id":"number", "value":"number"}}
+                },
+                "key": "grid_id",
+                "fields": ["value"]
+              }
+            },
+            { "calculate": "round(datum.value)", "as": "val_int" },
+            { "filter": "valFilter == 'All' || datum.val_int == toNumber(valFilter)" }
+          ],
+          "mark": {"type": "geoshape", "clip": true},
+          "encoding": {
+            "color": {"field": "val_int", "type": "ordinal", "title": "Sunshine (h)", "scale": {"scheme": "inferno"}},
+            "stroke": {"value": "#999"}, "strokeWidth": {"value": 0},
+            "tooltip": [
+              {"field": "gid_num", "title": "Grid ID"},
+              {"field": "val_int", "type": "ordinal", "title": "Sunshine (h)"}
+            ]
+          }
+        },
+        {
+          "data": {
+            "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/refs/heads/main/oceans%20(1).json",
+            "format": {"type": "topojson", "feature": "oceans"}
+          },
+          "transform": [{ "filter": "Melbourne == true" }],
+          "mark": {"type": "geoshape", "fill": "#ffffff", "clip": true},
+          "encoding": {
+            "opacity": {
+              "condition": {"param": "Ocean", "value": 0},
+              "value": 1
+            }
+          }
+        },
+        {
+          "data": {
+            "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/Level2_Australia%20(1).json",
+            "format": {"type": "topojson", "feature": "Level2_Australia"}
+          },
+          "transform": [{ "filter": "Melbourne == true" }],
+          "mark": {"type": "geoshape", "fill": null, "stroke": "#000000", "strokeWidth": 0.8, "clip": true},
+          "encoding": {"tooltip": [{"field": "properties.SA3_NAME21", "title": "SA3"}]}
+        },
+
+        /* ---- Annotations (ZOOMED; Melbourne == true) ---- */
+        {
+          "transform": [{ "filter": "Melbourne == true" }],
+          "data": { "values": [ { "name": "West Pilbara", "lon": 117.2, "lat": -21.9 } ] },
+          "mark": { "type": "point", "filled": true, "size": 120, "color": "#1569a5", "clip": true },
+          "encoding": {
+            "longitude": { "field": "lon", "type": "quantitative" },
+            "latitude": { "field": "lat", "type": "quantitative" },
+            "tooltip": [{ "field": "name", "title": "Location"}]
+          }
+        },
+        {
+          "transform": [{ "filter": "Melbourne == true" }],
+          "data": { "values": [ { "label": "West Pilbara, WA (10)", "lon": 115, "lat": -10.7 } ] },
+          "mark": { "type": "text", "dx": 8, "dy": -8, "fontSize": 13.5, "fontWeight": "bold",
+                    "fill": "#1569a5", "stroke": "white", "strokeWidth": 3, "clip": true },
+          "encoding": {
+            "longitude": { "field": "lon", "type": "quantitative" },
+            "latitude": { "field": "lat", "type": "quantitative" },
+            "text": { "field": "label" }
+          }
+        },
+        {
+          "transform": [{ "filter": "Melbourne == true" }],
+          "data": { "values": [ { "name": "WA and NT", "lon": 129, "lat": -22 } ] },
+          "mark": { "type": "point", "filled": true, "size": 120, "color": "#068f2f", "clip": true },
+          "encoding": {
+            "longitude": { "field": "lon", "type": "quantitative" },
+            "latitude": { "field": "lat", "type": "quantitative" },
+            "tooltip": [{ "field": "name", "title": "Location"}]
+          }
+        },
+        {
+          "transform": [{ "filter": "Melbourne == true" }],
+          "data": { "values": [ { "label": "WA and NT (9 hours)", "lon": 113.5, "lat": -11.7 } ] },
+          "mark": { "type": "text", "dx": 8, "dy": -8, "fontSize": 13.5, "fontWeight": "bold",
+                    "fill": "#068f2f", "stroke": "white", "strokeWidth": 3, "clip": true },
+          "encoding": {
+            "longitude": { "field": "lon", "type": "quantitative" },
+            "latitude": { "field": "lat", "type": "quantitative" },
+            "text": { "field": "label" }
+          }
+        },
+        {
+          "transform": [{ "filter": "Melbourne == true" }],
+          "data": { "values": [ { "name": "Cobar/Bourke, NSW (9 hours)", "lon": 145.4, "lat": -30.8 } ] },
+          "mark": { "type": "point", "filled": true, "size": 120, "color": "#5f01b8", "clip": true },
+          "encoding": {
+            "longitude": { "field": "lon", "type": "quantitative" },
+            "latitude": { "field": "lat", "type": "quantitative" },
+            "tooltip": [{ "field": "name", "title": "Location"}]
+          }
+        },
+        {
+          "transform": [{ "filter": "Melbourne == true" }],
+          "data": { "values": [ { "label": "Cobar/Bourke, NSW (9 hours)", "lon": 115.4, "lat": -12.7 } ] },
+          "mark": { "type": "text", "dx": 8, "dy": -8, "fontSize": 13.5, "fontWeight": "bold",
+                    "fill": "#5f01b8", "stroke": "white", "strokeWidth": 3, "clip": true },
+          "encoding": {
+            "longitude": { "field": "lon", "type": "quantitative" },
+            "latitude": { "field": "lat", "type": "quantitative" },
+            "text": { "field": "label" }
+          }
+        },
+        {
+          "transform": [{ "filter": "Melbourne == true" }],
+          "data": { "values": [ { "name": "Weemelah, NSW (9)", "lon": 149, "lat": -29.2 } ] },
+          "mark": { "type": "point", "filled": true, "size": 120, "color": "#ee007b", "clip": true },
+          "encoding": {
+            "longitude": { "field": "lon", "type": "quantitative" },
+            "latitude": { "field": "lat", "type": "quantitative" },
+            "tooltip": [{ "field": "name", "title": "Location"}]
+          }
+        },
+        {
+          "transform": [{ "filter": "Melbourne == true" }],
+          "data": { "values": [ { "label": "Weemelah, NSW (9)", "lon": 114.7, "lat": -13.7 } ] },
+          "mark": { "type": "text", "dx": 8, "dy": -8, "fontSize": 13.5, "fontWeight": "bold",
+                    "fill": "#ee007b", "stroke": "white", "strokeWidth": 3, "clip": true },
+          "encoding": {
+            "longitude": { "field": "lon", "type": "quantitative" },
+            "latitude": { "field": "lat", "type": "quantitative" },
+            "text": { "field": "label" }
+          }
+        }
+      ]
+    }
+  ],
+
+  "title": { "text": "Average Sunlight hours in Australia", "fontSize": 25, "fontWeight": "bold", "dy": 40 },
+  "config": {}
+}
+
+    /* Embed + force resize after layout */
+    const embeds = [];
+    function doEmbeds() {
+      embeds.length = 0;
+      vegaEmbed('#vis1', specVis1, {actions:false}).then(r => embeds.push(r.view));
+      vegaEmbed('#vis3', specVis3, {actions:false}).then(r => embeds.push(r.view));
+      vegaEmbed('#vis2', specVis2, {actions:false}).then(r => embeds.push(r.view));
+    }
+
+    function resizeAll() {
+      embeds.forEach(v => { try { v.resize(); } catch(e) {} });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      doEmbeds();
+      setTimeout(resizeAll, 0);           // resize once after layout
+      window.addEventListener('resize', resizeAll);
+    });
+  </script>
+</body>
+</html>
