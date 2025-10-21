@@ -11,7 +11,7 @@
 
   <!-- pure.css -->
   <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
-    integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+        integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
 
   <!-- Google font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,9 +32,11 @@
       box-sizing: border-box;
     }
     .pure-g > [class*="pure-u"] { padding: 8px; box-sizing: border-box; }
-    .vis-container { min-height: 280px; }
-    h1 { margin-bottom: 0.25rem; }
-    p.small-font { font-size: 0.9rem; color: #555; }
+
+    /* ✅ critical for responsive sizing */
+    .vis-container { width: 100%; min-height: 260px; }
+    .vega-embed, .vega-embed > * { width: 100% !important; max-width: 100% !important; }
+    .vega-embed svg, .vega-embed canvas { width: 100% !important; height: auto; }
   </style>
 </head>
 
@@ -49,18 +51,17 @@
       </div>
     </div>
 
-    <!-- Row 1 (2 columns) -->
+    <!-- Row 1 -->
     <div class="pure-g">
       <div class="pure-u-1-2">
         <div class="description description-left">
           <h2>Residential Usage of Solar Panels</h2>
           <p>
             Over the years, the use of solar panels (photovoltaic cells) on the top of roofs in residential areas has
-            been steadily rising. Today, roughly 38% of homes nationwide generate their own solar power.
-            South Australia and Queensland lead the transition with more than half of households equipped with rooftop
-            systems, while Western Australia follows closely at 46.98%. In contrast, more densely populated states such as
-            New South Wales (32.10%) and Victoria (29.19%) show lower adoption rates, likely due to a higher share of
-            apartment housing.
+            been steadily rising. Today, roughly 38% of homes nationwide generate their own solar power. South Australia
+            and Queensland lead the transition with more than half of households equipped with rooftop systems, while
+            Western Australia follows closely at 46.98%. In contrast, more densely populated states such as New South
+            Wales (32.10%) and Victoria (29.19%) show lower adoption rates, likely due to a higher share of apartment housing.
           </p>
         </div>
       </div>
@@ -69,15 +70,14 @@
       </div>
     </div>
 
-    <!-- Row 2 (2 columns) -->
+    <!-- Row 2 -->
     <div class="pure-g">
       <div class="pure-u-1-2">
         <div class="description description-left">
           <h2>Growth of Adoption</h2>
           <p>
             Annual rooftop solar installations surged from 2016 and peaked during 2020–2021, reflecting falling costs,
-            generous incentives, and growing consumer confidence. While volumes eased slightly after 2021, they remain
-            historically high.
+            incentives, and consumer confidence. While volumes eased slightly after 2021, they remain historically high.
           </p>
         </div>
       </div>
@@ -86,7 +86,7 @@
       </div>
     </div>
 
-    <!-- Row 3 (2 columns) -->
+    <!-- Row 3 -->
     <div class="pure-g">
       <div class="pure-u-1-2">
         <div id="vis2" class="vis-container"></div>
@@ -95,9 +95,8 @@
         <div class="description description-right">
           <h2>Sunlight Patterns</h2>
           <p>
-            Average sunshine hours vary across Australia. Use the controls to filter values or zoom into Melbourne’s
-            region. Locations across WA and NT typically record higher sunshine hours, aligning with stronger solar
-            potential.
+            Average sunshine hours vary across Australia. Use the controls to filter values or zoom into Melbourne’s region.
+            Locations across WA and NT typically record higher sunshine hours, aligning with stronger solar potential.
           </p>
         </div>
       </div>
@@ -106,143 +105,107 @@
     <!-- Footer -->
     <div class="pure-g">
       <div class="pure-u-1-1">
-        <p class="small-font">
-          This visualisation is created by the student. The datasource is a combination of public datasets (links provided in the repository).
+        <p style="font-size:0.9rem;color:#555;">
+          This visualisation is created by the student. The datasource is a combination of public datasets (links in the repository).
         </p>
       </div>
     </div>
 
-  </div> <!-- end .page -->
+  </div>
 
   <script>
-    /* --- vis1: bar (homes with solar by state) --- */
+    /* vis1: bar */
     var specVis1 = {
       "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
       "title": "Percentage of Homes with Solar Panels per State",
       "width": "container",
       "height": 320,
       "autosize": {"type": "fit", "contains": "padding"},
-      "data": {
-        "values": [
-          {"State": "ACT", "Homes with Solar (%)": 33.21},
-          {"State": "NSW", "Homes with Solar (%)": 32.10},
-          {"State": "NT",  "Homes with Solar (%)": 25.31},
-          {"State": "QLD", "Homes with Solar (%)": 50.85},
-          {"State": "SA",  "Homes with Solar (%)": 53.29},
-          {"State": "TAS", "Homes with Solar (%)": 23.54},
-          {"State": "VIC", "Homes with Solar (%)": 29.19},
-          {"State": "WA",  "Homes with Solar (%)": 46.98}
-        ]
-      },
+      "data": { "values": [
+        {"State": "ACT", "Homes with Solar (%)": 33.21},
+        {"State": "NSW", "Homes with Solar (%)": 32.10},
+        {"State": "NT",  "Homes with Solar (%)": 25.31},
+        {"State": "QLD", "Homes with Solar (%)": 50.85},
+        {"State": "SA",  "Homes with Solar (%)": 53.29},
+        {"State": "TAS", "Homes with Solar (%)": 23.54},
+        {"State": "VIC", "Homes with Solar (%)": 29.19},
+        {"State": "WA",  "Homes with Solar (%)": 46.98}
+      ]},
       "mark": "bar",
       "encoding": {
-        "x": {"field": "State", "type": "nominal", "axis": {"labelAngle": 0, "labelPadding": 10}},
-        "y": {"field": "Homes with Solar (%)", "type": "quantitative"},
-        "tooltip": [
-          {"field": "State"},
-          {"field": "Homes with Solar (%)", "type": "quantitative", "format": ".2f", "title": "Homes with Solar (%)"}
-        ]
+        "x": {"field": "State", "type": "nominal", "axis": {"labelAngle": 0}},
+        "y": {"field": "Homes with Solar (%)", "type": "quantitative"}
       }
     };
 
-    /* --- vis3: line (installs per year) --- */
+    /* vis3: line */
     var specVis3 = {
       "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
       "title":"Solar Systems Installed per Year",
       "width": "container",
       "height": 280,
       "autosize": {"type": "fit", "contains": "padding"},
-      "data": {
-        "values": [
-          {"Year": "2016", "Solar Systems Installed": 132697},
-          {"Year": "2017", "Solar Systems Installed": 174942},
-          {"Year": "2018", "Solar Systems Installed": 224852},
-          {"Year": "2019", "Solar Systems Installed": 284031},
-          {"Year": "2020", "Solar Systems Installed": 370320},
-          {"Year": "2021", "Solar Systems Installed": 377458},
-          {"Year": "2022", "Solar Systems Installed": 315717},
-          {"Year": "2023", "Solar Systems Installed": 333859},
-          {"Year": "2024", "Solar Systems Installed": 317348},
-          {"Year": "2025", "Solar Systems Installed": 95393}
-        ]
-      },
+      "data": { "values": [
+        {"Year": "2016", "Solar Systems Installed": 132697},
+        {"Year": "2017", "Solar Systems Installed": 174942},
+        {"Year": "2018", "Solar Systems Installed": 224852},
+        {"Year": "2019", "Solar Systems Installed": 284031},
+        {"Year": "2020", "Solar Systems Installed": 370320},
+        {"Year": "2021", "Solar Systems Installed": 377458},
+        {"Year": "2022", "Solar Systems Installed": 315717},
+        {"Year": "2023", "Solar Systems Installed": 333859},
+        {"Year": "2024", "Solar Systems Installed": 317348},
+        {"Year": "2025", "Solar Systems Installed": 95393}
+      ]},
       "mark": {"type": "line", "point": true},
       "encoding": {
         "x": {"field": "Year", "type": "ordinal", "axis": {"labelAngle": 0}},
-        "y": {"field": "Solar Systems Installed", "type": "quantitative"},
-        "tooltip": [
-          {"field": "Year"},
-          {"field": "Solar Systems Installed", "type": "quantitative", "title": "Solar Systems Installed"}
-        ]
+        "y": {"field": "Solar Systems Installed", "type": "quantitative"}
       }
     };
 
-    /* --- vis2: map (sunshine hours) --- */
+    /* vis2: map */
     var specVis2 = {
       "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-      "title": {"text": "Average Sunlight Hours in Australia", "fontSize": 20, "fontWeight": "bold", "dy": 8},
+      "title": {"text": "Average Sunlight Hours in Australia", "fontSize": 18, "fontWeight": "bold"},
       "width": "container",
-      "height": 520,
+      "height": 420,   /* ↓ a little shorter so it fits nicely */
       "autosize": {"type": "fit", "contains": "padding"},
       "params": [
         {"name": "Melbourne", "value": false, "bind": {"input": "checkbox", "label": "Zoom in"}},
         {"name": "Ocean", "value": false, "bind": {"input": "checkbox", "label": "Make oceans transparent"}},
-        {
-          "name": "valFilter","value": "All",
-          "bind": {"input": "select","name": "Show value: ",
-                   "options": ["All","0","1","2","3","4","5","6","7","8","9","10"],
-                   "labels":  ["All","0","1","2","3","4","5","6","7","8","9","10"]}
-        }
+        {"name": "valFilter","value": "All","bind": {"input": "select","name": "Show value: ",
+          "options": ["All","0","1","2","3","4","5","6","7","8","9","10"]}}
       ],
       "layer": [
         {
           "projection": {"type": "mercator", "center": [135, -26], "scale": 900},
           "layer": [
             {
-              "data": {
-                "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/grid_cellsFINAL.json",
-                "format": {"type": "topojson", "feature": "grid_cellsFINAL"}
-              },
+              "data": {"url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/grid_cellsFINAL.json",
+                       "format": {"type": "topojson", "feature": "grid_cellsFINAL"}},
               "transform": [
                 {"filter": "Melbourne == false"},
                 {"calculate": "toNumber(datum.id)", "as": "gid_num"},
-                {
-                  "lookup": "gid_num",
-                  "from": {
-                    "data": {
-                      "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/sunann_gridvals.csv",
-                      "format": {"type": "csv", "parse": {"grid_id":"number","value":"number"}}
-                    },
-                    "key": "grid_id", "fields": ["value"]
-                  }
-                },
+                {"lookup": "gid_num",
+                 "from": {"data": {"url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/sunann_gridvals.csv",
+                                   "format": {"type": "csv", "parse": {"grid_id":"number","value":"number"}}},
+                          "key": "grid_id", "fields": ["value"]}},
                 {"calculate": "round(datum.value)", "as": "val_int"},
                 {"filter": "valFilter == 'All' || datum.val_int == toNumber(valFilter)"}
               ],
               "mark": {"type": "geoshape", "clip": true},
               "encoding": {
                 "color": {"field": "val_int", "type": "ordinal", "title": "Sunshine (h)", "scale": {"scheme": "inferno"}},
-                "stroke": {"value": "#999"}, "strokeWidth": {"value": 0},
-                "tooltip": [{"field": "val_int", "type": "ordinal", "title": "Sunshine (h)"}]
+                "stroke": {"value": "#999"}, "strokeWidth": {"value": 0}
               }
             },
             {
-              "data": {
-                "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/refs/heads/main/oceans%20(1).json",
-                "format": {"type": "topojson", "feature": "oceans"}
-              },
+              "data": {"url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/refs/heads/main/oceans%20(1).json",
+                       "format": {"type": "topojson", "feature": "oceans"}},
               "transform": [{"filter": "Melbourne == false"}],
               "mark": {"type": "geoshape", "fill": "#ffffff", "clip": true},
-              "encoding": { "opacity": {"condition": {"param": "Ocean", "value": 0}, "value": 1} }
-            },
-            {
-              "data": {
-                "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/Level2_Australia%20(1).json",
-                "format": {"type": "topojson", "feature": "Level2_Australia"}
-              },
-              "transform": [{"filter": "Melbourne == false"}],
-              "mark": {"type": "geoshape", "fill": null, "stroke": "#000000", "strokeWidth": 0.8, "clip": true},
-              "encoding": {"tooltip": [{"field": "properties.SA3_NAME21", "title": "SA3"}]}
+              "encoding": {"opacity": {"condition": {"param": "Ocean", "value": 0}, "value": 1}}
             }
           ]
         },
@@ -250,63 +213,47 @@
           "projection": {"type": "mercator", "center": [145, -37.8], "scale": 8000},
           "layer": [
             {
-              "data": {
-                "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/grid_cellsFINAL.json",
-                "format": {"type": "topojson", "feature": "grid_cellsFINAL"}
-              },
+              "data": {"url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/grid_cellsFINAL.json",
+                       "format": {"type": "topojson", "feature": "grid_cellsFINAL"}},
               "transform": [
                 {"filter": "Melbourne == true"},
                 {"calculate": "toNumber(datum.id)", "as": "gid_num"},
-                {
-                  "lookup": "gid_num",
-                  "from": {
-                    "data": {
-                      "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/sunann_gridvals.csv",
-                      "format": {"type": "csv", "parse": {"grid_id":"number","value":"number"}}
-                    },
-                    "key": "grid_id", "fields": ["value"]
-                  }
-                },
+                {"lookup": "gid_num",
+                 "from": {"data": {"url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/sunann_gridvals.csv",
+                                   "format": {"type": "csv", "parse": {"grid_id":"number","value":"number"}}},
+                          "key": "grid_id", "fields": ["value"]}},
                 {"calculate": "round(datum.value)", "as": "val_int"},
                 {"filter": "valFilter == 'All' || datum.val_int == toNumber(valFilter)"}
               ],
               "mark": {"type": "geoshape", "clip": true},
               "encoding": {
                 "color": {"field": "val_int", "type": "ordinal", "title": "Sunshine (h)", "scale": {"scheme": "inferno"}},
-                "stroke": {"value": "#999"}, "strokeWidth": {"value": 0},
-                "tooltip": [
-                  {"field": "gid_num", "title": "Grid ID"},
-                  {"field": "val_int", "type": "ordinal", "title": "Sunshine (h)"}
-                ]
+                "stroke": {"value": "#999"}, "strokeWidth": {"value": 0}
               }
-            },
-            {
-              "data": {
-                "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/refs/heads/main/oceans%20(1).json",
-                "format": {"type": "topojson", "feature": "oceans"}
-              },
-              "transform": [{"filter": "Melbourne == true"}],
-              "mark": {"type": "geoshape", "fill": "#ffffff", "clip": true},
-              "encoding": { "opacity": {"condition": {"param": "Ocean", "value": 0}, "value": 1} }
-            },
-            {
-              "data": {
-                "url": "https://raw.githubusercontent.com/luccadfoli/FIT3179/main/Level2_Australia%20(1).json",
-                "format": {"type": "topojson", "feature": "Level2_Australia"}
-              },
-              "transform": [{"filter": "Melbourne == true"}],
-              "mark": {"type": "geoshape", "fill": null, "stroke": "#000000", "strokeWidth": 0.8, "clip": true},
-              "encoding": {"tooltip": [{"field": "properties.SA3_NAME21", "title": "SA3"}]}
             }
           ]
         }
       ]
     };
 
-    /* Embed */
-    vegaEmbed('#vis1', specVis1, { actions: false }).catch(console.error);
-    vegaEmbed('#vis3', specVis3, { actions: false }).catch(console.error);
-    vegaEmbed('#vis2', specVis2, { actions: false }).catch(console.error);
+    /* Embed + force resize after layout */
+    const embeds = [];
+    function doEmbeds() {
+      embeds.length = 0;
+      vegaEmbed('#vis1', specVis1, {actions:false}).then(r => embeds.push(r.view));
+      vegaEmbed('#vis3', specVis3, {actions:false}).then(r => embeds.push(r.view));
+      vegaEmbed('#vis2', specVis2, {actions:false}).then(r => embeds.push(r.view));
+    }
+
+    function resizeAll() {
+      embeds.forEach(v => { try { v.resize(); } catch(e) {} });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      doEmbeds();
+      setTimeout(resizeAll, 0);           // resize once after layout
+      window.addEventListener('resize', resizeAll);
+    });
   </script>
 </body>
 </html>
