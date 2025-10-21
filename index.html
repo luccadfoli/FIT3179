@@ -1,119 +1,121 @@
 <!DOCTYPE html>
 <html>
-
 <head>
+  <meta charset="utf-8" />
   <title>Solar Panels in Australia</title>
-  <!-- Import Vega & Vega-Lite (does not have to be from CDN) -->
+
+  <!-- Vega stack -->
   <script src="https://cdn.jsdelivr.net/npm/vega@5.20.2"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.1.0"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.17.0"></script>
 
-  <!-- Import pure.css -->
+  <!-- pure.css -->
   <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
     integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Google font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
 
-  <!-- CSS file -->
+  <!-- Your CSS -->
   <link rel="stylesheet" type="text/css" href="css/styles.css" media="all">
+
   <style>
-    html, body { margin: 0; padding: 0; }
+    html, body { margin: 0; padding: 0; overflow-x: hidden; font-family: 'Open Sans', system-ui, -apple-system, sans-serif; }
     .page {
-      max-width: 1100px;   /* adjust to taste */
-      margin: 0 auto;      /* center the page */
-      padding: 0 24px;     /* side padding */
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
       border-left: 1px solid #e9e9e9;
       border-right: 1px solid #e9e9e9;
       box-sizing: border-box;
     }
-    /* Optional: add a little gutter inside columns */
     .pure-g > [class*="pure-u"] { padding: 8px; box-sizing: border-box; }
     .vis-container { min-height: 280px; }
+    h1 { margin-bottom: 0.25rem; }
+    p.small-font { font-size: 0.9rem; color: #555; }
   </style>
-  
-</head>  
+</head>
 
 <body>
-
   <div class="page">
 
-    <!-- pure grid group -->
+    <!-- Header -->
     <div class="pure-g">
       <div class="pure-u-1-1">
         <h1>Solar Panels in Australia</h1>
         <p>The best places to set up photovoltaic solar panels in Australia.</p>
       </div>
     </div>
-    <!-- end pure grid group -->
 
-    <!-- pure grid group (Row 1) -->
+    <!-- Row 1 (2 columns) -->
     <div class="pure-g">
       <div class="pure-u-1-2">
         <div class="description description-left">
           <h2>Residential Usage of Solar Panels</h2>
-          <p>Over the years, the use of solar panels (photovoltaic cells) on the top of 
-            roofs in residential areas has been increasing more and more. Today, roughly 
-            38% of homes nationwide generate their own solar power. South Australia 
-            and Queensland lead the transition with more than half of households equipped
-            with rooftop solar systems, Western Australia follows closely at 46.98%. In 
-            contrast, the more densley populated states such as New South Wales and 
-            Victoria show slightly  lower adoption rates; 32.10% and 29.19% respectively.
-            This is likely due to a higher concentration of apartment housing.</p>
+          <p>
+            Over the years, the use of solar panels (photovoltaic cells) on the top of roofs in residential areas has
+            been steadily rising. Today, roughly 38% of homes nationwide generate their own solar power.
+            South Australia and Queensland lead the transition with more than half of households equipped with rooftop
+            systems, while Western Australia follows closely at 46.98%. In contrast, more densely populated states such as
+            New South Wales (32.10%) and Victoria (29.19%) show lower adoption rates, likely due to a higher share of
+            apartment housing.
+          </p>
         </div>
       </div>
       <div class="pure-u-1-2">
         <div id="vis1" class="vis-container"></div>
       </div>
     </div>
-    <!-- end pure grid group -->
 
-    <!-- pure grid group (Row 2) -->
+    <!-- Row 2 (2 columns) -->
     <div class="pure-g">
-      <div class="pure-u-1-3">
+      <div class="pure-u-1-2">
         <div class="description description-left">
-          <h2>Growth of adoption</h2>
-          <p>Using all three columns without merging. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa sapien faucibus et molestie ac feugiat
-            sed. Egestas purus viverra accumsan in nisl. Egestas purus viverra accumsan in nisl.</p>
+          <h2>Growth of Adoption</h2>
+          <p>
+            Annual rooftop solar installations surged from 2016 and peaked during 2020–2021, reflecting falling costs,
+            generous incentives, and growing consumer confidence. While volumes eased slightly after 2021, they remain
+            historically high.
+          </p>
         </div>
       </div>
-      <div class="pure-u-1-3" style="width: 46%;">
-        <div id="vis3" class="vis-container" style="margin-left: 15px;"></div>
+      <div class="pure-u-1-2">
+        <div id="vis3" class="vis-container"></div>
       </div>
     </div>
-    <!-- end pure grid group -->
 
-    <!-- pure grid group (Row 3) -->
+    <!-- Row 3 (2 columns) -->
     <div class="pure-g">
-      <div class="pure-u-2-3">
+      <div class="pure-u-1-2">
         <div id="vis2" class="vis-container"></div>
       </div>
-      <div class="pure-u-1-3">
+      <div class="pure-u-1-2">
         <div class="description description-right">
-          <h2>First and Second Columns Combined</h2>
-          <p>The first and second columns are combined. Lorem ipsum dolor sit amet,
-            consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa sapien
-            faucibus et molestie ac feugiat sed. Egestas purus viverra accumsan in nisl.</p>
+          <h2>Sunlight Patterns</h2>
+          <p>
+            Average sunshine hours vary across Australia. Use the controls to filter values or zoom into Melbourne’s
+            region. Locations across WA and NT typically record higher sunshine hours, aligning with stronger solar
+            potential.
+          </p>
         </div>
       </div>
     </div>
-    <!-- end pure grid group -->
 
+    <!-- Footer -->
     <div class="pure-g">
-      <div class="pure-u-1-1 small-font">
-        <p>This visualisation is created by <a href="https://fit3179.github.io/Vega-Lite/" target="_blank">FIT3179
-            Teaching Team</a>. The datasource is <a href="#" target="_blank">some data repository online</a>.</p>
+      <div class="pure-u-1-1">
+        <p class="small-font">
+          This visualisation is created by the student. The datasource is a combination of public datasets (links provided in the repository).
+        </p>
       </div>
     </div>
 
-  </div> <!-- end page -->
+  </div> <!-- end .page -->
 
-  <script type="text/javascript">
-    /* -------- vis1: bar (homes with solar by state) -------- */
+  <script>
+    /* --- vis1: bar (homes with solar by state) --- */
     var specVis1 = {
       "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
       "title": "Percentage of Homes with Solar Panels per State",
@@ -134,11 +136,7 @@
       },
       "mark": "bar",
       "encoding": {
-        "x": {
-          "field": "State", "type": "nominal",
-          "axis": {"labelAngle": 0, "labelPadding": 10},
-          "scale": {"paddingInner": 0.5, "paddingOuter": 0.25}
-        },
+        "x": {"field": "State", "type": "nominal", "axis": {"labelAngle": 0, "labelPadding": 10}},
         "y": {"field": "Homes with Solar (%)", "type": "quantitative"},
         "tooltip": [
           {"field": "State"},
@@ -147,7 +145,7 @@
       }
     };
 
-    /* -------- vis3: line (installs per year) -------- */
+    /* --- vis3: line (installs per year) --- */
     var specVis3 = {
       "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
       "title":"Solar Systems Installed per Year",
@@ -179,7 +177,7 @@
       }
     };
 
-    /* -------- vis2: map (sunshine hours) -------- */
+    /* --- vis2: map (sunshine hours) --- */
     var specVis2 = {
       "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
       "title": {"text": "Average Sunlight Hours in Australia", "fontSize": 20, "fontWeight": "bold", "dy": 8},
@@ -191,11 +189,9 @@
         {"name": "Ocean", "value": false, "bind": {"input": "checkbox", "label": "Make oceans transparent"}},
         {
           "name": "valFilter","value": "All",
-          "bind": {
-            "input": "select","name": "Show value: ",
-            "options": ["All","0","1","2","3","4","5","6","7","8","9","10"],
-            "labels":  ["All","0","1","2","3","4","5","6","7","8","9","10"]
-          }
+          "bind": {"input": "select","name": "Show value: ",
+                   "options": ["All","0","1","2","3","4","5","6","7","8","9","10"],
+                   "labels":  ["All","0","1","2","3","4","5","6","7","8","9","10"]}
         }
       ],
       "layer": [
@@ -250,8 +246,6 @@
             }
           ]
         },
-
-        /* Zoomed view when "Melbourne" is checked */
         {
           "projection": {"type": "mercator", "center": [145, -37.8], "scale": 8000},
           "layer": [
@@ -309,15 +303,10 @@
       ]
     };
 
-    /* Reuse the line chart for vis4 (you can change this to another spec if you like) */
-    var specVis4 = specVis3;
-
-    /* Embed in the exact containers per your layout */
-    vegaEmbed('#vis1', specVis1, { "actions": false });
-    vegaEmbed('#vis2', specVis2, { "actions": false }).catch(console.error);
-    vegaEmbed('#vis3', specVis3, { "actions": false }).catch(console.error);
-    vegaEmbed('#vis4', specVis4, { "actions": false }).catch(console.error);
+    /* Embed */
+    vegaEmbed('#vis1', specVis1, { actions: false }).catch(console.error);
+    vegaEmbed('#vis3', specVis3, { actions: false }).catch(console.error);
+    vegaEmbed('#vis2', specVis2, { actions: false }).catch(console.error);
   </script>
 </body>
-
 </html>
