@@ -8,9 +8,10 @@
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.1.0"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.17.0"></script>
 
-  <!-- Pure.css + responsive grid -->
+  <!-- Pure.css (core + responsive grid) -->
   <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" crossorigin="anonymous">
   <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" crossorigin="anonymous">
+
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Google font -->
@@ -23,7 +24,7 @@
     html, body { margin: 0; max-width: 100%; overflow-x: hidden; font-family: 'Open Sans', sans-serif; }
     * { box-sizing: border-box; }
 
-    /* Centered page with side borders */
+    /* Center the content, add side borders, and cap width */
     .page {
       max-width: 1100px;
       margin: 0 auto;
@@ -33,14 +34,15 @@
       background: #fff;
     }
 
-    h1 { margin: 24px 0 4px; }
+    h1 { margin: 24px 0 6px; }
     p { line-height: 1.6; }
 
     .vis-container { width: 100%; }
     img, svg, canvas { max-width: 100%; height: auto; display: block; }
 
+    /* add a bit of space between columns/rows */
     .pure-g { gap: 18px; }
-    .description { overflow-wrap: anywhere; }
+
     .small-font { font-size: 0.9rem; color: #555; }
   </style>
 </head>
@@ -83,16 +85,18 @@
       </div>
     </div>
 
+    <!-- Footer -->
     <div class="pure-g">
       <div class="pure-u-1 small-font">
         <p>
-          This visualisation is created by <a href="https://fit3179.github.io/Vega-Lite/" target="_blank">FIT3179 Teaching Team</a>.
+          This visualisation is created by
+          <a href="https://fit3179.github.io/Vega-Lite/" target="_blank">FIT3179 Teaching Team</a>.
           The datasource is <a href="#" target="_blank">some data repository online</a>.
         </p>
       </div>
     </div>
 
-  </div> <!-- /page -->
+  </div> <!-- end .page -->
 
   <script>
     /* ---------- vis1: bar chart (states) ---------- */
@@ -173,9 +177,11 @@
         {"name": "Ocean", "value": false, "bind": {"input": "checkbox", "label": "Make oceans transparent"}},
         {
           "name": "valFilter","value": "All",
-          "bind": {"input": "select","name": "Show value: ",
-                   "options": ["All","0","1","2","3","4","5","6","7","8","9","10"],
-                   "labels":  ["All","0","1","2","3","4","5","6","7","8","9","10"]}
+          "bind": {
+            "input": "select","name": "Show value: ",
+            "options": ["All","0","1","2","3","4","5","6","7","8","9","10"],
+            "labels":  ["All","0","1","2","3","4","5","6","7","8","9","10"]
+          }
         }
       ],
       "layer": [
@@ -217,9 +223,7 @@
               },
               "transform": [{"filter": "Melbourne == false"}],
               "mark": {"type": "geoshape", "fill": "#ffffff", "clip": true},
-              "encoding": {
-                "opacity": {"condition": {"param": "Ocean", "value": 0}, "value": 1}
-              }
+              "encoding": { "opacity": {"condition": {"param": "Ocean", "value": 0}, "value": 1} }
             },
             {
               "data": {
@@ -229,53 +233,11 @@
               "transform": [{"filter": "Melbourne == false"}],
               "mark": {"type": "geoshape", "fill": null, "stroke": "#000000", "strokeWidth": 0.8, "clip": true},
               "encoding": {"tooltip": [{"field": "properties.SA3_NAME21", "title": "SA3"}]}
-            },
-
-            /* points with tooltips */
-            {
-              "transform": [{"filter": "Melbourne == false"}],
-              "data": {"values": [{"name": "West Pilbara (10 hours)", "lon": 117.2, "lat": -21.9}]},
-              "mark": {"type": "point", "filled": true, "size": 120, "color": "#1569a5", "clip": true},
-              "encoding": {
-                "longitude": {"field": "lon", "type": "quantitative"},
-                "latitude": {"field": "lat", "type": "quantitative"},
-                "tooltip": [{"field": "name", "title": "Location"}]
-              }
-            },
-            {
-              "transform": [{"filter": "Melbourne == false"}],
-              "data": {"values": [{"name": "WA and NT (9 hours)", "lon": 129, "lat": -22}]},
-              "mark": {"type": "point", "filled": true, "size": 120, "color": "#068f2f", "clip": true},
-              "encoding": {
-                "longitude": {"field": "lon", "type": "quantitative"},
-                "latitude": {"field": "lat", "type": "quantitative"},
-                "tooltip": [{"field": "name", "title": "Location"}]
-              }
-            },
-            {
-              "transform": [{"filter": "Melbourne == false"}],
-              "data": {"values": [{"name": "Cobar/Bourke, NSW (9 hours)", "lon": 145.4, "lat": -30.8}]},
-              "mark": {"type": "point", "filled": true, "size": 120, "color": "#5f01b8", "clip": true},
-              "encoding": {
-                "longitude": {"field": "lon", "type": "quantitative"},
-                "latitude": {"field": "lat", "type": "quantitative"},
-                "tooltip": [{"field": "name", "title": "Location"}]
-              }
-            },
-            {
-              "transform": [{"filter": "Melbourne == false"}],
-              "data": {"values": [{"name": "Weemelah, NSW (9 hours)", "lon": 149, "lat": -29.2}]},
-              "mark": {"type": "point", "filled": true, "size": 120, "color": "#ee007b", "clip": true},
-              "encoding": {
-                "longitude": {"field": "lon", "type": "quantitative"},
-                "latitude": {"field": "lat", "type": "quantitative"},
-                "tooltip": [{"field": "name", "title": "Location"}]
-              }
             }
           ]
         },
 
-        /* zoomed view */
+        /* Zoomed view when "Melbourne" is checked */
         {
           "projection": {"type": "mercator", "center": [145, -37.8], "scale": 8000},
           "layer": [
@@ -317,9 +279,7 @@
               },
               "transform": [{"filter": "Melbourne == true"}],
               "mark": {"type": "geoshape", "fill": "#ffffff", "clip": true},
-              "encoding": {
-                "opacity": {"condition": {"param": "Ocean", "value": 0}, "value": 1}
-              }
+              "encoding": { "opacity": {"condition": {"param": "Ocean", "value": 0}, "value": 1} }
             },
             {
               "data": {
@@ -335,10 +295,10 @@
       ]
     };
 
-    /* Embed */
+    /* Embed in order: vis1 (row1), vis2 left (row2), vis3 right (row2) */
     vegaEmbed('#vis1', specVis1, {actions: false}).catch(console.error);
-    vegaEmbed('#vis2', specVis2, {actions: false}).catch(console.error);  // map on the LEFT of row 2
-    vegaEmbed('#vis3', specVis3, {actions: false}).catch(console.error);  // line on the RIGHT of row 2
+    vegaEmbed('#vis2', specVis2, {actions: false}).catch(console.error);
+    vegaEmbed('#vis3', specVis3, {actions: false}).catch(console.error);
   </script>
 </body>
 </html>
